@@ -1,0 +1,89 @@
+{
+  "scope": "MoNuSeg ratio=0.10 C+fallback reproducibility run",
+  "split": {
+    "train": 24,
+    "validation": 6,
+    "test": 14,
+    "file": "provenance/monuseg_split_24_6_14.json"
+  },
+  "sparse_points": {
+    "ratio": 0.1,
+    "annotation_seed": 42,
+    "generated_output_pattern": "annotations/ratio0.1_nested_seed{annotation_seed}/labels_point/0",
+    "resampling_allowed": false
+  },
+  "stage1": {
+    "architecture": "ResUNet34",
+    "initialization": "torchvision ImageNet",
+    "epochs": 100,
+    "batch_size": 64,
+    "workers": 8,
+    "optimizer": "Adam",
+    "learning_rate": 0.0001,
+    "betas": [0.9, 0.99],
+    "weight_decay": 0.0001,
+    "seed": 42,
+    "gaussian_sigma": 2.75,
+    "positive_radius": 11,
+    "background_radius": 22,
+    "background_threshold": 0.1,
+    "k_neighbors": 3,
+    "max_growth_rate": 0.5,
+    "curriculum_update_frequency": 30,
+    "curriculum_use_gt_points": false,
+    "checkpoint_selection": "maximum validation macro detection F1; exact tie selects earlier epoch",
+    "threshold": 0.65,
+    "min_area": 12,
+    "max_area": 150,
+    "merge_radius": 15,
+    "matching_radius": 11
+  },
+  "stage2": {
+    "backend": "SAM2",
+    "checkpoint_name": "sam2.1_hiera_base_plus.pt",
+    "model_config_name": "sam2.1_hiera_b+.yaml",
+    "model_variant": "sam2.1_hiera_base_plus",
+    "negative_strategy": "radius",
+    "negative_radius": 32,
+    "max_negative_points": 4,
+    "candidate_selection_mode": "sam_only",
+    "fallback": "cluster",
+    "conflict_policy": "winner",
+    "score_grid": [0.65, 0.7, 0.75],
+    "min_area_grid": [10, 20],
+    "max_area_grid": [3000, 5000],
+    "selected_score": 0.65,
+    "selected_min_area": 20,
+    "selected_max_area": 3000,
+    "selection_split": "validation only"
+  },
+  "hovernet": {
+    "mode": "original",
+    "imagenet_backbone": "Preact-ResNet50",
+    "stage1_epochs": 30,
+    "stage1_batch_size": 8,
+    "stage1_freeze_encoder": true,
+    "stage2_final_epoch": 80,
+    "stage2_batch_size": 4,
+    "learning_rate": 0.0001,
+    "workers": 4,
+    "seed": 42,
+    "lambda_hv_mse": 1.0,
+    "lambda_hv_msge": 1.0,
+    "checkpoint_selection": "PQ, AJI, DQ, then abs(global pred/GT - 1.05); validation only"
+  },
+  "calibration": {
+    "protocol": "light155",
+    "selected_postprocess": {
+      "np_threshold": 0.53,
+      "blob_min_size": 40,
+      "overall_threshold": 0.4
+    },
+    "selected_pruning": {
+      "mode": "area_only",
+      "min_area": 10
+    },
+    "selection_split": "validation only"
+  },
+  "test_policy": "Run once after all selected artifacts are frozen; historical Test14 exposure must be disclosed as retrospective/confirmatory."
+}

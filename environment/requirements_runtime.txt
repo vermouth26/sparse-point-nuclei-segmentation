@@ -1,0 +1,16 @@
+# Direct Python dependencies imported by the packaged pipeline.
+# CUDA-enabled PyTorch must be installed for the target CUDA runtime separately.
+imageio
+numpy
+opencv-python
+Pillow
+PyYAML
+scikit-image
+scikit-learn
+scipy
+tensorboardX
+torch
+torchvision
+tqdm
+
+# SAM2 is installed from its official repository and is not vendored here.

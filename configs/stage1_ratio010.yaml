@@ -1,0 +1,47 @@
+experiment_name: monuseg_r010_r0_raw_fixedop_v1
+dataset:
+  name: MO
+  ratio: 0.1
+  description: _stage1_r0_raw_fixedop_v1
+  raw_data_dir: null
+  processed_data_dir: null
+  save_dir: null
+model:
+  name: ResUNet34
+  out_c: 1
+  pretrained: true
+initialization:
+  mode: imagenet
+training:
+  seed: null
+  gpus: [0]
+  input_size: 224
+  epochs: 100
+  batch_size: 64
+  checkpoint_freq: 1
+  lr: 0.0001
+  weight_decay: 0.0001
+  log_interval: 30
+  workers: 8
+  threshold: 0.65
+  update_freq: 30
+  max_growth_rate: 0.5
+  bg_threshold: 0.1
+  k_neighbors: 3
+  r2: 22
+  gaussian_sigma: 2.75
+  curriculum_use_gt_points: false
+evaluation:
+  threshold: 0.65
+  patch_size: 224
+  overlap: 80
+  matching_radius: 11
+  pseudo_center_radius: 15
+postprocess:
+  min_area: 12
+  max_area: 150
+pipeline:
+  prepare_data: false
+  run_test_after_train: false
+  run_inference_after_train: false
+  final_prepare_voronoi: false
